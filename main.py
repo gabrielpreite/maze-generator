@@ -1,11 +1,12 @@
 import numpy as np
 import random
 import time
+import cv2
 
 def recursive(x, y):
     #print("x:"+str(x)+"y:"+str(y))
-    print(visited)
-    time.sleep(0.5)
+    #print(visited)
+    #time.sleep(0.1)
     visited[x][y] = 1
 
     nb = []
@@ -38,23 +39,48 @@ def recursive(x, y):
             ys = nb[sel][1]
             visited[nb[sel][0]][nb[sel][1]] = 1 #mark as visited
         nb.remove([nb[sel][0], nb[sel][1]])
-        for i in range(size_x):
+        """for i in range(size_x):
             for j in range(size_y):
                 print(maze[i][j], end=' ')
-            print("\n")
+            print("\n")"""
         recursive(xs, ys)
     return
 
 random.seed()
-size_x = 5
-size_y = 4
+size_x = 25
+size_y = 25
 
 maze = [[[1 for i in range(4)] for j in range(size_y)] for k in range(size_x)]
 visited = np.zeros([size_x, size_y])
 
 recursive(0, 0)
+maze[0][0][1] = 0
+maze[size_x-1][size_y-1][3] = 0
 
 for i in range(size_x):
     for j in range(size_y):
         print(maze[i][j], end=' ')
     print("\n")
+
+image = np.zeros((size_x*3, size_y*3))
+
+for i in range(size_x):
+    for j in range(size_y):
+        image[i*3+1][j*3+1] = 1 #removes wall at the center of each block
+
+#cv2.imshow('image1', image)
+#cv2.waitKey(0)
+
+for i in range(size_x):
+    for j in range(size_y):
+        if(maze[i][j][0] == 0):
+            image[i*3][j*3+1] = 1
+        if(maze[i][j][1] == 0):
+            image[i*3+1][j*3] = 1
+        if(maze[i][j][2] == 0):
+            image[i*3+2][j*3+1] = 1
+        if(maze[i][j][3] == 0):
+            image[i*3+1][j*3+2] = 1
+
+cv2.imshow('image2', image)
+cv2.waitKey(0)
